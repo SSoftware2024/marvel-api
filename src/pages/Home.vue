@@ -1,6 +1,7 @@
 <template>
     <div>
-        Home {{ store.count }}
+        Home {{ store.count }} <br>
+        Home {{ store.name }} <br>
 
         <button @click="store.increment">
             Click
