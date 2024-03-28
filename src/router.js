@@ -1,12 +1,18 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-import Home from './pages/Home.vue';
+import List from './pages/List.vue';
 import Hero from './pages/Hero.vue';
+import Home from './pages/Home.vue';
 
 const routes = [
   {
     path: '/hero',
     name: 'hero',
     component: Hero
+  },
+  {
+    path: '/list',
+    name: 'list',
+    component: List
   },
   {
     path: '/', //view inicial

@@ -1,28 +1,43 @@
 <template>
-    <div>
-        Home {{ store.count }} <br>
-        Home {{ store.name }} <br>
-
-        <button @click="store.increment">
-            Click
-        </button>
-
-
-        <div class="q-pa-md q-gutter-sm">
-            <q-btn color="white" text-color="black" label="Standard" />
-            <q-btn color="primary" label="Primary" />
-            <q-btn color="secondary" label="Secondary" />
-            <q-btn color="amber" glossy label="Amber" />
-            <q-btn color="brown-5" label="Brown 5" />
-            <q-btn color="deep-orange" glossy label="Deep Orange" />
-            <q-btn color="purple" label="Purple" />
-            <q-btn color="black" label="Black" />
+    <div class="center">
+        <div class="content" style="background-color: white; border-radius: 40px;">
+            <q-input rounded outlined v-model="search" label="Quem vai salvar seu dia hoje?">
+                <template v-slot:append>
+                    <q-icon v-if="search !== ''" name="close" @click="search = ''" class="cursor-pointer" />
+                    <q-icon name="search" />
+                </template>
+            </q-input>
+        </div>
+        <div class="content q-mt-sm" style="text-align: center;">
+            <q-btn class="bg-red-14 q-mr-sm" text-color="white" label="Todos" @click="router.push('/list')"/>
+            <q-btn class="bg-teal-4" text-color="white" label="BUSCAR" @click="router.push('/list')"/>
         </div>
     </div>
 </template>
 
 <script setup>
-import { useCounterStore } from '../stores/counter.js'
+import {ref} from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
-const store = useCounterStore();
+const search = ref('');
+const router = useRouter();
+
 </script>
+
+<style scoped lang="scss">
+.center {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../assets/img/marvel.jpg');
+    background-size: cover;
+
+    .content {
+        min-width: 600px;
+    }
+}
+</style>
