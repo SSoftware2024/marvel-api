@@ -15,15 +15,15 @@
         </div>
 
         <div class="cards-heros">
-            <q-card class="hero-content">
-                <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
+            <q-card class="hero-content" v-for="value in heros">
+                <q-img :src="`${value.thumbnail.path}/portrait_xlarge.${value.thumbnail.extension}`">
                     <div class="absolute-bottom text-h6 text-center">
-                        Title
+                        {{ value.name }}
                     </div>
                 </q-img>
 
                 <q-card-section>
-                    Text here
+                    {{ value.description ? value.description:'Not found' }}
                 </q-card-section>
                 <q-card-actions>
                     <q-btn flat @click="router.push('/hero')">ver mais</q-btn>
@@ -38,13 +38,42 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import instance from '@/js/configAPI.js';
+import { useRouter,useRoute } from 'vue-router';
+import { useQuasar } from 'quasar'
 
 const search = ref('');
 const router = useRouter();
-
+const route = useRoute();
 const current = ref(1);
+const $q = useQuasar();
+const heros = ref({});
+
+function _loadName(){
+    search.value = route.params.name ?? null;
+}
+async function _loadHeros() {
+    let axios = await instance();
+    let data = search.value ? {name: search.value} : {};
+    axios.get('characters', {
+        params: data
+    }).then((result) => {
+        heros.value = result.data.data.results;
+    }).catch((error) => {
+        const data = error.response.data;
+        let message = data.code + ': ' + data.message;
+        $q.notify({
+            message: message,
+            color: 'red'
+        })
+    });
+}
+
+onMounted(() => {
+    _loadName();
+    _loadHeros();
+});
 </script>
 
 <style scoped lang="scss">
