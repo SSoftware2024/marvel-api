@@ -10,7 +10,7 @@ const routes = [
     component: Hero
   },
   {
-    path: '/list',
+    path: '/list/:name?',
     name: 'list',
     component: List
   },
