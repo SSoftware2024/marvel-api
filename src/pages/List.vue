@@ -2,9 +2,9 @@
     <div>
         <div class="content">
             <div style="width: 600px; padding: 10px 0 0 0;">
-                <q-input v-model="search" outlined label="O próximo herói está à sua espera:">
+                <q-input v-model="search" outlined label="O próximo herói está à sua espera:" @keyup.enter="searchHero">
                     <template v-slot:append>
-                        <q-icon v-if="search !== ''" name="close" @click="search = ''" class="cursor-pointer" />
+                        <q-icon v-if="search !== ''" name="close" @click="allHeros" class="cursor-pointer" />
                         <q-icon name="search" />
                     </template>
                 </q-input>
@@ -23,7 +23,7 @@
                 </q-img>
 
                 <q-card-section>
-                    {{ value.description ? value.description:'Not found' }}
+                    {{ value.description ? value.description : 'Not found' }}
                 </q-card-section>
                 <q-card-actions>
                     <q-btn flat @click="router.push('/hero')">ver mais</q-btn>
@@ -32,34 +32,61 @@
         </div>
 
         <div class="pagination">
-            <q-pagination v-model="current" max="5" direction-links flat color="grey" active-color="primary" />
+            <q-pagination v-model="current_page" direction-links flat color="grey" active-color="primary" :max="totalPage"
+                :max-pages="7" @update:model-value="paginate" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import instance from '@/js/configAPI.js';
-import { useRouter,useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+import URL from '@/js/URL.js';
 import { useQuasar } from 'quasar'
 
 const search = ref('');
 const router = useRouter();
-const route = useRoute();
-const current = ref(1);
+const current_page = ref(1);
+const old_page = ref(1);
 const $q = useQuasar();
 const heros = ref({});
+const total = ref(0);
 
-function _loadName(){
-    search.value = route.params.name ?? null;
+const marvel_options = reactive({
+    offset: 0,
+    limit: 20,
+})
+const totalPage = computed(() => Math.ceil(total.value / marvel_options.limit));
+function paginate(page) {
+    loadHeros(page);
+    current_page.value = page;
+    URL.set('page', page);
 }
-async function _loadHeros() {
+
+function searchHero() {
+    old_page.value = current_page.value;
+    current_page.value = 1;
+    URL.set('name', search.value);
+    loadHeros(current_page.value);
+}
+function allHeros() {
+   search.value = '';
+   URL.delete('name');
+   paginate(old_page.value);
+}
+
+
+
+async function loadHeros(page = 1) {
+    _loadOffset(page);
     let axios = await instance();
-    let data = search.value ? {name: search.value} : {};
+    let data = search.value ? { ...marvel_options, name: search.value } : { ...marvel_options };
     axios.get('characters', {
         params: data
     }).then((result) => {
         heros.value = result.data.data.results;
+        total.value = result.data.data.total;
     }).catch((error) => {
         const data = error.response.data;
         let message = data.code + ': ' + data.message;
@@ -70,9 +97,25 @@ async function _loadHeros() {
     });
 }
 
+function _loadName() {
+    search.value = URL.get("name") ?? null;
+}
+function _loadOffset(page = 1) {
+    if (page == 1) {
+        marvel_options.offset = 0;
+    } else if (page == 2) {
+        marvel_options.offset = marvel_options.offset = marvel_options.limit;
+    } else if (page > 2) {
+        marvel_options.offset = marvel_options.limit * page - marvel_options.limit;
+    }
+    return marvel_options.offset;
+}
+
 onMounted(() => {
+    let page = URL.get('page') ?? 1;
+    
     _loadName();
-    _loadHeros();
+    paginate(page);
 });
 </script>
 
@@ -101,6 +144,7 @@ onMounted(() => {
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin: 10px 0;
+    padding-bottom: 10px;
 }
 </style>

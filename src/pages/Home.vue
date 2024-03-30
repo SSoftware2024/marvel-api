@@ -18,7 +18,6 @@
 <script setup>
 import {ref} from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import instance from '@/js/configAPI.js';
 import { useQuasar } from 'quasar'
 const search = ref('');
 const router = useRouter();
@@ -26,23 +25,7 @@ const router = useRouter();
 const $q = useQuasar();
 
 async function teste() {
-    const axios = await instance();
-    // axios.get('characters',{
-    //     params: {
-    //         name: search.value
-    //     }
-    // })
-    // .then((result) => {
-    //     console.log(result)
-    // }).catch((error) => {
-    //     const data = error.response.data;
-    //     let message = data.code+': '+data.message;
-    //     $q.notify({
-    //       message: message,
-    //       color: 'red'
-    //     })
-    // });
-    router.push({name:'list', params: {name: search.value}})
+    router.push('/list?name='+search.value);
 }
 
 </script>
