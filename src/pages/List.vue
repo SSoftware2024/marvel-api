@@ -58,7 +58,9 @@ const marvel_options = reactive({
     offset: 0,
     limit: 20,
 })
+
 const totalPage = computed(() => Math.ceil(total.value / marvel_options.limit));
+
 function paginate(page) {
     loadHeros(page);
     current_page.value = page;
@@ -76,8 +78,6 @@ function allHeros() {
     URL.delete('name');
     paginate(old_page.value);
 }
-
-
 
 async function loadHeros(page = 1) {
     $q.loading.show();
