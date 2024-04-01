@@ -4,16 +4,20 @@
             <div style="width: 600px; padding: 10px 0 0 0;">
                 <q-input v-model="search" outlined label="O próximo herói está à sua espera:" @keyup.enter="searchHero">
                     <template v-slot:append>
-                        <q-icon v-if="search !== ''" name="close" @click="allHeros" class="cursor-pointer" />
+                        <q-icon v-if="!!search" name="close" @click="allHeros" class="cursor-pointer" />
                         <q-icon name="search" />
                     </template>
                 </q-input>
                 <div class="flex justify-start" style="margin-top: 3px;">
-                    <q-btn color="primary" label="Início" @click="router.push('/')" />
+                    <q-btn color="primary" label="Início" @click="goHome" />
+                    <q-btn color="secondary" class="q-ml-sm" :label="'Tema: '+($q.dark.isActive ? 'Claro':'Escuro')" @click="$q.dark.toggle()" />
                 </div>
             </div>
         </div>
-
+        <div class="pagination">
+            <q-pagination v-model="current_page" direction-links flat color="grey" active-color="primary"
+                :max="totalPage" :max-pages="15" @update:model-value="paginate" />
+        </div>
         <div class="cards-heros">
             <q-card class="hero-content" v-for="value in heros">
                 <q-img :src="`${value.thumbnail.path}/portrait_xlarge.${value.thumbnail.extension}`">
@@ -25,15 +29,12 @@
                 <q-card-section>
                     {{ value.description ? value.description : 'Not found' }}
                 </q-card-section>
-                <q-card-actions>
-                    <q-btn flat @click="router.push('/hero')">ver mais</q-btn>
-                </q-card-actions>
             </q-card>
         </div>
 
         <div class="pagination">
-            <q-pagination v-model="current_page" direction-links flat color="grey" active-color="primary" :max="totalPage"
-                :max-pages="7" @update:model-value="paginate" />
+            <q-pagination v-model="current_page" direction-links flat color="grey" active-color="primary"
+                :max="totalPage" :max-pages="15" @update:model-value="paginate" />
         </div>
     </div>
 </template>
@@ -71,22 +72,24 @@ function searchHero() {
     loadHeros(current_page.value);
 }
 function allHeros() {
-   search.value = '';
-   URL.delete('name');
-   paginate(old_page.value);
+    search.value = '';
+    URL.delete('name');
+    paginate(old_page.value);
 }
 
 
 
 async function loadHeros(page = 1) {
+    $q.loading.show();
     _loadOffset(page);
     let axios = await instance();
-    let data = search.value ? { ...marvel_options, name: search.value } : { ...marvel_options };
+    let data = search.value ? { ...marvel_options, nameStartsWith: search.value } : { ...marvel_options };
     axios.get('characters', {
         params: data
     }).then((result) => {
         heros.value = result.data.data.results;
         total.value = result.data.data.total;
+        $q.loading.hide()
     }).catch((error) => {
         const data = error.response.data;
         let message = data.code + ': ' + data.message;
@@ -94,7 +97,16 @@ async function loadHeros(page = 1) {
             message: message,
             color: 'red'
         })
+        $q.loading.hide()
     });
+
+}
+
+function goHome() {
+    URL.delete('page');
+    URL.delete('name');
+    router.push('/');
+    $q.dark.set(false)
 }
 
 function _loadName() {
@@ -113,9 +125,8 @@ function _loadOffset(page = 1) {
 
 onMounted(() => {
     let page = URL.get('page') ?? 1;
-    
     _loadName();
-    paginate(page);
+    paginate(parseInt(page));
 });
 </script>
 

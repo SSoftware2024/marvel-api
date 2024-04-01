@@ -10,23 +10,16 @@
         </div>
         <div class="content q-mt-sm" style="text-align: center;">
             <q-btn class="bg-red-14 q-mr-sm" text-color="white" label="Todos" @click="router.push('/list')"/>
-            <q-btn class="bg-teal-4" text-color="white" label="BUSCAR" @click="teste"/>
+            <q-btn class="bg-teal-4" text-color="white" label="BUSCAR" @click="router.push('/list?name='+search)"/>
         </div>
     </div>
 </template>
 
 <script setup>
 import {ref} from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router';
 const search = ref('');
 const router = useRouter();
-
-const $q = useQuasar();
-
-async function teste() {
-    router.push('/list?name='+search.value);
-}
 
 </script>
 
