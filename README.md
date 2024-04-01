@@ -36,10 +36,6 @@
 </details>
 
 
-
-
---- **N/A** ---
-
 <p align="right">(<a href="#readme-top">Voltar ao topo</a>)</p>
 
 <!-- FUNCIONALIDADES -->
@@ -58,7 +54,7 @@
     * SASS
     * QUASAR
     * AXIOS
-    * JS-MD5 (PACOTE DE CRIPTOGRÁFIA)
+    * JS-MD5 (PACOTE DE CRIPTOGRAFIA)
 2. OUTROS
     * VITE
     * NODE 20.10.0
