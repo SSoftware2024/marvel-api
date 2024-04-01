@@ -1,5 +1,5 @@
 const url = {
-    set: (key,value) => {
+    set: (key, value) => {
         let url = new URL(window.location.href);
         url.searchParams.set(key, value);
         window.history.pushState({}, '', url.toString());
