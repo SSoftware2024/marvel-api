@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="content">
-            <div style="width: 600px; padding: 10px 0 0 0;">
+            <div class="actions">
                 <q-input v-model="search" outlined label="O próximo herói está à sua espera:" @keyup.enter="searchHero">
                     <template v-slot:append>
                         <q-icon v-if="!!search" name="close" @click="allHeros" class="cursor-pointer" />
@@ -10,7 +10,8 @@
                 </q-input>
                 <div class="flex justify-start" style="margin-top: 3px;">
                     <q-btn color="primary" label="Início" @click="goHome" />
-                    <q-btn color="secondary" class="q-ml-sm" :label="'Tema: '+($q.dark.isActive ? 'Claro':'Escuro')" @click="$q.dark.toggle()" />
+                    <q-btn color="secondary" class="q-ml-sm" :label="'Tema: ' + ($q.dark.isActive ? 'Claro' : 'Escuro')"
+                        @click="$q.dark.toggle()" />
                 </div>
             </div>
         </div>
@@ -56,7 +57,7 @@ const total = ref(0);
 
 const marvel_options = reactive({
     offset: 0,
-    limit: 20,
+    limit: 12,
 })
 
 const totalPage = computed(() => Math.ceil(total.value / marvel_options.limit));
@@ -137,6 +138,16 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
 
+    .actions {
+        width: 600px;
+        padding: 10px 0 0 0;
+
+        @media (max-width: 603px) {
+            width: 300px;
+        }
+    }
+
+
 }
 
 .cards-heros {
@@ -149,6 +160,11 @@ onMounted(() => {
         margin: 2px 3px;
         width: 300px;
         min-width: 300px;
+    }
+
+    @media (max-width: 1243px) {
+        max-height: 700px;
+        overflow-y: auto;
     }
 }
 
