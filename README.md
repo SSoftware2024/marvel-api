@@ -93,7 +93,7 @@ Apenas veja ou busque o herói(a) que desejar.
 
 
 ## Versão atual
-:heavy_check_mark:  v1.0.0
+:heavy_check_mark:  v1.0.1
 
 
 <!-- LICENÇA -->
