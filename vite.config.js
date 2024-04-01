@@ -10,7 +10,7 @@ export default defineConfig({
     }),
     quasar()
   ],
-  base: '/marvel-api/',
+  base: '/marvel/',
   resolve: {
     alias: [
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
